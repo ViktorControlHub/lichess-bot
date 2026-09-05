@@ -24,14 +24,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        # Встановлюємо надійний модуль для автоматичного керування Stockfish
-        pip install stockfish
 
-    - name: Auto Download Stockfish
+    - name: Auto Download Stockfish 19
       run: |
         mkdir -p engines
-        # Наказуємо Python автоматично завантажити правильний бінарник під процесор сервера
-        python -c "import urllib.request, tarfile, os; urllib.request.urlretrieve('https://github.com', 'sf.tar'); t = tarfile.open('sf.tar'); t.extractall(); os.rename('stockfish-16/stockfish-16-ubuntu-x86-64', 'engines/stockfish'); os.chmod('engines/stockfish', 0o755)"
+        # Завантажуємо чистий, вже розпакований файл Stockfish 19 за прямим посиланням
+        python -c "import urllib.request, os; urllib.request.urlretrieve('https://github.com', 'engines/stockfish'); os.chmod('engines/stockfish', 0o755)"
 
     - name: Force Apply Config
       run: |
