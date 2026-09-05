@@ -32,9 +32,10 @@ jobs:
         url: "https://lichess.org"
 
         engine:
-          name: "python-chess"
+          name: "stockfish"
           protocol: "uci"
-          dir: "./"
+          # Вказуємо пряму системну папку GitHub, де вже лежить готовий Stockfish
+          dir: "/usr/games"
           options: {}
 
         challenge:
@@ -47,7 +48,6 @@ jobs:
           modes:
             - casual
             - rated
-          # Додаємо обов'язковий блок варіантів шахів, щоб Python не падав
           variants:
             - standard
         EOF
