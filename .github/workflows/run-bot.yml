@@ -20,22 +20,15 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install dependencies and Stockfish
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Build Stockfish from Source
-      run: |
+        # Встановлюємо офіційний готовий пакет stockfish через Python
+        pip install stockfish
         mkdir -p engines
-        # Завантажуємо стабільні вихідні файли Stockfish
-        git clone --depth 1 https://github.com stockfish_src
-        cd stockfish_src/src
-        # Компілюємо під процесор сервера GitHub Actions
-        make -j2 profile-build ARCH=x86-64
-        mv stockfish ../../engines/stockfish
-        cd ../../
-        rm -rf stockfish_src
+        # Наказуємо Python автоматично знайти та скопіювати правильний бінарник у потрібну папку
+        python -c "import shutil, stockfish; shutil.copy(stockfish.Stockfish()._stockfish_path, 'engines/stockfish')"
         chmod +x engines/stockfish
 
     - name: Force Apply Config
