@@ -28,8 +28,8 @@ jobs:
     - name: Download Stockfish 19 Engine
       run: |
         mkdir -p engines
-        # Завантажуємо оригінальний та чистий Stockfish 19 без дурних блокувань GitHub
-        curl -L -o engines/stockfish https://githubusercontent.com || curl -L -o engines/stockfish https://github.com
+        # Завантажуємо базову версію Stockfish 19 без інструкцій BMI2, щоб сервери GitHub не падали
+        curl -L -o engines/stockfish https://githubusercontent.com
         chmod +x engines/stockfish
 
     - name: Force Apply Config
@@ -42,11 +42,7 @@ jobs:
           name: "stockfish"
           protocol: "uci"
           dir: "./engines"
-          options:
-            Threads: 2
-            Hash: 1024
-            Ponder: false
-            Skill Level: 20
+          options: {}
 
         challenge:
           play_bots: true
