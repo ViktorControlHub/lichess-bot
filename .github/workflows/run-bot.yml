@@ -25,9 +25,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Force Apply Config
+    - name: Force Apply Config and Engine
       run: |
-        # Записуємо налаштування примусово у файл, який бот точно прочитає
+        # Створюємо чистий конфіг
         cat << 'EOF' > config.yml
         token: "$LICHESS_BOT_TOKEN"
         url: "https://lichess.org"
@@ -53,6 +53,10 @@ jobs:
             - casual
             - rated
         EOF
+
+        # ПРИМУСОВО копіюємо вбудований у форк Стокфіш під простою назвою "stockfish"
+        cp engines/stockfish-x86_64-bmi2 engines/stockfish || cp engines/stockfish-ubuntu-x86-64 engines/stockfish || true
+        chmod +x engines/stockfish
 
     - name: Run Lichess Bot
       env:
