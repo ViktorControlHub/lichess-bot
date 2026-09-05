@@ -25,17 +25,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Install Official Stockfish via APT
+    - name: Download Stockfish 19 Engine
       run: |
-        sudo apt-get update
-        sudo apt-get install -y stockfish
         mkdir -p engines
-        cp /usr/games/stockfish engines/stockfish
+        # Завантажуємо перевірену збірку Stockfish 19, яка не ламає скрипт ініціалізації
+        curl -L -o engines/stockfish https://githubusercontent.com
         chmod +x engines/stockfish
 
     - name: Force Apply Config
       run: |
-        # Створюємо чистий шаблон конфігу
         cat << 'EOF' > config.yml
         token: "REPLACE_ME"
         url: "https://lichess.org"
@@ -62,6 +60,5 @@ jobs:
       env:
         LICHESS_BOT_TOKEN: ${{ secrets.LICHESS_BOT_TOKEN }}
       run: |
-        # Автоматично та надійно замінюємо шаблон REPLACE_ME на ваш справжній токен з пам'яті GitHub
         sed -i "s|REPLACE_ME|$LICHESS_BOT_TOKEN|g" config.yml
         python lichess-bot.py
