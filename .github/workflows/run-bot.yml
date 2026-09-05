@@ -25,14 +25,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Setup System Stockfish
-      run: |
-        # Створюємо папку engines і просто копіюємо туди рушій, який уже є в системі Ubuntu
-        mkdir -p engines
-        sudo apt-get update && sudo apt-get install -y stockfish
-        cp /usr/games/stockfish engines/stockfish
-        chmod +x engines/stockfish
-
     - name: Force Apply Config
       run: |
         cat << 'EOF' > config.yml
@@ -40,9 +32,9 @@ jobs:
         url: "https://lichess.org"
 
         engine:
-          name: "stockfish"
+          name: "python-chess"
           protocol: "uci"
-          dir: "./engines"
+          dir: "./"
           options: {}
 
         challenge:
@@ -55,12 +47,14 @@ jobs:
           modes:
             - casual
             - rated
+          # Додаємо обов'язковий блок варіантів шахів, щоб Python не падав
+          variants:
+            - standard
         EOF
 
     - name: Run Lichess Bot
       env:
         LICHESS_BOT_TOKEN: ${{ secrets.LICHESS_BOT_TOKEN }}
       run: |
-        # Вклеюємо токен і запускаємо
         sed -i "s|REPLACE_ME|$LICHESS_BOT_TOKEN|g" config.yml
         python lichess-bot.py
