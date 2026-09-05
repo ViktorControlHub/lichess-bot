@@ -25,31 +25,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Build Stockfish 19 from Source
-      run: |
-        mkdir -p engines
-        # Завантажуємо офіційний вихідний код найсвіжішої версії Stockfish 19
-        git clone --depth 1 https://github.com stockfish_src
-        cd stockfish_src/src
-        
-        # Компілюємо рушій безпосередньо на сервері під його рідний процесор
-        make -j2 profile-build ARCH=x86-64
-        
-        # Переносимо готовий непереможний бінарник у папку бота
-        mv stockfish ../../engines/stockfish
-        cd ../../
-        rm -rf stockfish_src
-        chmod +x engines/stockfish
-
     - name: Force Apply Config
       run: |
+        # Створюємо чистий файл налаштувань під вбудований у ваш репозиторій Stockfish
         cat << 'EOF' > config.yml
         token: "REPLACE_ME"
-        url: "https://lichess.org"
+        url: "https://lichess.org/"
 
         engine:
           name: "stockfish"
           protocol: "uci"
+          # Вказуємо шлях до готового рушія, який вже лежить у вашому форку
           dir: "./engines"
           options:
             Threads: 2
@@ -72,5 +58,6 @@ jobs:
       env:
         LICHESS_BOT_TOKEN: ${{ secrets.LICHESS_BOT_TOKEN }}
       run: |
+        # Вклеюємо ваш правильний токен LICHESS_BOT_TOKEN і запускаємо
         sed -i "s|REPLACE_ME|$LICHESS_BOT_TOKEN|g" config.yml
         python lichess-bot.py
