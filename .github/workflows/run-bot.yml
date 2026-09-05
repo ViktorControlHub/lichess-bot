@@ -25,9 +25,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Force Apply Config and Engine
+    - name: Download Stockfish 19 Engine
       run: |
-        # Створюємо чистий конфіг
+        mkdir -p engines
+        # Завантажуємо оригінальний та чистий Stockfish 19 без дурних блокувань GitHub
+        curl -L -o engines/stockfish https://githubusercontent.com || curl -L -o engines/stockfish https://github.com
+        chmod +x engines/stockfish
+
+    - name: Force Apply Config
+      run: |
         cat << 'EOF' > config.yml
         token: "$LICHESS_BOT_TOKEN"
         url: "https://lichess.org"
@@ -53,10 +59,6 @@ jobs:
             - casual
             - rated
         EOF
-
-        # ПРИМУСОВО копіюємо вбудований у форк Стокфіш під простою назвою "stockfish"
-        cp engines/stockfish-x86_64-bmi2 engines/stockfish || cp engines/stockfish-ubuntu-x86-64 engines/stockfish || true
-        chmod +x engines/stockfish
 
     - name: Run Lichess Bot
       env:
