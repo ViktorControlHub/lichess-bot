@@ -25,12 +25,21 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Download Stockfish 19 Engine
+    - name: Download Stockfish 19 Universal Engine
       run: |
         mkdir -p engines
-        # Завантажуємо перевірену збірку Stockfish 19, яка не ламає скрипт ініціалізації
-        curl -L -o engines/stockfish https://githubusercontent.com
+        # Завантажуємо оригінальний архів Stockfish 19 з офіційних релізів GitHub
+        wget https://github.com
+        
+        # Розпаковуємо його на сервері
+        tar -xvf stockfish-19-ubuntu-x86-64.tar
+        
+        # Переносимо універсальний бінарник у потрібну папку під потрібним ім'ям
+        mv stockfish-19/stockfish-19-ubuntu-x86-64 engines/stockfish
         chmod +x engines/stockfish
+        
+        # Очищуємо зайві тимчасові файли
+        rm -rf stockfish-19 stockfish-19-ubuntu-x86-64.tar
 
     - name: Force Apply Config
       run: |
@@ -42,7 +51,11 @@ jobs:
           name: "stockfish"
           protocol: "uci"
           dir: "./engines"
-          options: {}
+          options:
+            # Налаштування для максимальної потужності безкоштовного сервера GitHub
+            Threads: 2
+            Hash: 1024
+            Ponder: false
 
         challenge:
           play_bots: true
@@ -60,5 +73,6 @@ jobs:
       env:
         LICHESS_BOT_TOKEN: ${{ secrets.LICHESS_BOT_TOKEN }}
       run: |
+        # Вклеюємо токен і запускаємо
         sed -i "s|REPLACE_ME|$LICHESS_BOT_TOKEN|g" config.yml
         python lichess-bot.py
