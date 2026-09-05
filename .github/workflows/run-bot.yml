@@ -25,18 +25,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Build Stockfish 19 from Source
+    - name: Build Stockfish from Source
       run: |
         mkdir -p engines
-        # Клонуємо офіційні вихідні файли Stockfish
+        # Завантажуємо стабільні вихідні файли Stockfish
         git clone --depth 1 https://github.com stockfish_src
         cd stockfish_src/src
-        # Запускаємо компіляцію під базову архітектуру віртуальної машини
+        # Компілюємо під процесор сервера GitHub Actions
         make -j2 profile-build ARCH=x86-64
-        # Переносимо готовий скомпільований файл туди, де його чекає бот
         mv stockfish ../../engines/stockfish
         cd ../../
-        # Очищуємо робочу папку
         rm -rf stockfish_src
         chmod +x engines/stockfish
 
