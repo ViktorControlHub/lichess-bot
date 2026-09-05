@@ -27,19 +27,17 @@ jobs:
 
     - name: Install Official Stockfish via APT
       run: |
-        # Оновлюємо списки програм та встановлюємо оригінальний Stockfish з офіційних сховищ Ubuntu
         sudo apt-get update
         sudo apt-get install -y stockfish
-        
-        # Копіюємо його в потрібну папку для бота, щоб він його точно побачив
         mkdir -p engines
         cp /usr/games/stockfish engines/stockfish
         chmod +x engines/stockfish
 
     - name: Force Apply Config
       run: |
+        # Прямо підставляємо секрет GitHub у файл конфігурації перед запуском
         cat << 'EOF' > config.yml
-        token: "$LICHESS_BOT_TOKEN"
+        token: "${{ secrets.LICHESS_BOT_TOKEN }}"
         url: "https://lichess.org"
 
         engine:
