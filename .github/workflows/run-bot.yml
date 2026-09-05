@@ -27,8 +27,32 @@ jobs:
 
     - name: Force Apply Config
       run: |
-        # Копіюємо наш конфіг під стандартним ім'ям у корінь скрипта
-        cp config.yml config.yaml || true
+        # Записуємо налаштування примусово у файл, який бот точно прочитає
+        cat << 'EOF' > config.yml
+        token: "$LICHESS_BOT_TOKEN"
+        url: "https://lichess.org"
+
+        engine:
+          name: "stockfish"
+          protocol: "uci"
+          dir: "./engines"
+          options:
+            Threads: 2
+            Hash: 1024
+            Ponder: false
+            Skill Level: 20
+
+        challenge:
+          play_bots: true
+          play_humans: true
+          time_controls:
+            - bullet
+            - blitz
+            - rapid
+          modes:
+            - casual
+            - rated
+        EOF
 
     - name: Run Lichess Bot
       env:
