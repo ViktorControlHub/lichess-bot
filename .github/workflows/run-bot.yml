@@ -35,9 +35,9 @@ jobs:
 
     - name: Force Apply Config
       run: |
-        # Прямо підставляємо секрет GitHub у файл конфігурації перед запуском
+        # Створюємо чистий шаблон конфігу
         cat << 'EOF' > config.yml
-        token: "${{ secrets.LICHESS_BOT_TOKEN }}"
+        token: "REPLACE_ME"
         url: "https://lichess.org"
 
         engine:
@@ -62,4 +62,6 @@ jobs:
       env:
         LICHESS_BOT_TOKEN: ${{ secrets.LICHESS_BOT_TOKEN }}
       run: |
+        # Автоматично та надійно замінюємо шаблон REPLACE_ME на ваш справжній токен з пам'яті GitHub
+        sed -i "s|REPLACE_ME|$LICHESS_BOT_TOKEN|g" config.yml
         python lichess-bot.py
