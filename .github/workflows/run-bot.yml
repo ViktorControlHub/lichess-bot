@@ -25,11 +25,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Download Stockfish 19 Engine
+    - name: Build Stockfish 19 from Source
       run: |
         mkdir -p engines
-        # Завантажуємо базову версію Stockfish 19 без інструкцій BMI2, щоб сервери GitHub не падали
-        curl -L -o engines/stockfish https://githubusercontent.com
+        # Клонуємо офіційні вихідні файли Stockfish
+        git clone --depth 1 https://github.com stockfish_src
+        cd stockfish_src/src
+        # Запускаємо компіляцію під базову архітектуру віртуальної машини
+        make -j2 profile-build ARCH=x86-64
+        # Переносимо готовий скомпільований файл туди, де його чекає бот
+        mv stockfish ../../engines/stockfish
+        cd ../../
+        # Очищуємо робочу папку
+        rm -rf stockfish_src
         chmod +x engines/stockfish
 
     - name: Force Apply Config
