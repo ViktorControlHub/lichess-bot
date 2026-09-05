@@ -27,15 +27,13 @@ jobs:
 
     - name: Force Apply Config
       run: |
-        # Створюємо чистий файл налаштувань під вбудований у ваш репозиторій Stockfish
         cat << 'EOF' > config.yml
         token: "REPLACE_ME"
-        url: "https://lichess.org/"
+        url: "https://lichess.org"
 
         engine:
           name: "stockfish"
           protocol: "uci"
-          # Вказуємо шлях до готового рушія, який вже лежить у вашому форку
           dir: "./engines"
           options:
             Threads: 2
@@ -58,6 +56,10 @@ jobs:
       env:
         LICHESS_BOT_TOKEN: ${{ secrets.LICHESS_BOT_TOKEN }}
       run: |
-        # Вклеюємо ваш правильний токен LICHESS_BOT_TOKEN і запускаємо
+        # ПРИМУСОВО знаходимо вбудований файл рушія та перейменовуємо його на просто "stockfish"
+        cp engines/stockfish-x86_64-bmi2 engines/stockfish || cp engines/stockfish-ubuntu-x86-64 engines/stockfish || cp engines/stockfish-x86_64 engines/stockfish || true
+        chmod +x engines/stockfish
+        
+        # Вклеюємо токен і запускаємо
         sed -i "s|REPLACE_ME|$LICHESS_BOT_TOKEN|g" config.yml
         python lichess-bot.py
