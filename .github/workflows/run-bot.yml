@@ -20,15 +20,20 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install dependencies and Stockfish
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        # Встановлюємо офіційний готовий пакет stockfish через Python
-        pip install stockfish
+
+    - name: Install Official Stockfish via APT
+      run: |
+        # Оновлюємо списки програм та встановлюємо оригінальний Stockfish з офіційних сховищ Ubuntu
+        sudo apt-get update
+        sudo apt-get install -y stockfish
+        
+        # Копіюємо його в потрібну папку для бота, щоб він його точно побачив
         mkdir -p engines
-        # Наказуємо Python автоматично знайти та скопіювати правильний бінарник у потрібну папку
-        python -c "import shutil, stockfish; shutil.copy(stockfish.Stockfish()._stockfish_path, 'engines/stockfish')"
+        cp /usr/games/stockfish engines/stockfish
         chmod +x engines/stockfish
 
     - name: Force Apply Config
