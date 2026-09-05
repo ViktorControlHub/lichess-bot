@@ -25,13 +25,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Download Stockfish 19 Engine
+    - name: Force Apply Config
       run: |
-        mkdir -p engines
-        # Завантажуємо безпосередньо сам файл рушія без архівів
-        curl -L -o engines/stockfish https://github.com
-        # Надаємо йому права на запуск
-        chmod +x engines/stockfish
+        # Копіюємо наш конфіг під стандартним ім'ям у корінь скрипта
+        cp config.yml config.yaml || true
 
     - name: Run Lichess Bot
       env:
